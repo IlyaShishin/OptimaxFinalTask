@@ -1,0 +1,8 @@
+tests\api\TriangleCheckerCest.php:getTriangleCheckZeroValues
+tests\api\TriangleCheckerCest.php:getTriangleCheckAIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckBIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckCIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckAAndBIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckAAndCIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckBAndCIsZero
+tests\api\TriangleCheckerCest.php:getTriangleCheckTwoValues
