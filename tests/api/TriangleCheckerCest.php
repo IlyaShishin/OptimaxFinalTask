@@ -1,26 +1,28 @@
 <?php
 
+use Codeception\Example;
+use Codeception\Util\HttpCode;
+
+
 class TriangleCheckerCest
 {
-    public function _before(ApiTester $I)
-    {
-    }
-
-    // tests
-    public function getTriangleCheckPositiveValues(ApiTester $I)
+    /**
+     * @dataProvider myProviderFirst
+     * @param ApiTester $I
+     */
+    public function getTriangleWithPositiveValues(ApiTester $I, Example $dataProvider): void
         //Метод тестирует позитивный сценарий, с вводом трёх целых положительных значений;
         //Ожидаем true, так как такой треугольник может существовать;
     {
-        $data = ["isPossible" => true];
         $I->sendGet('/triangle/possible?a=2&b=3&c=4');
 
-        $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); //200
+        $I->seeResponseCodeIs($dataProvider['expectedCode']); //200
         $I->seeResponseIsJson();
-        $I->seeResponseContains(json_encode($data));
+        $I->seeResponseContains(json_encode($dataProvider['expectedMessage']));
     }
 
-    public function getTriangleCheckZeroValues(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом трёх целых значений, равных нулю;
+    public function getTriangleWithZeroValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом трёх целых значений, равных нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -31,8 +33,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckAIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметра 'a' равному нулю;
+    public function getTriangleWithAIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметра 'a' равному нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -43,8 +45,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckBIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметра 'b' равному нулю;
+    public function getTriangleWithBIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметра 'b' равному нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -55,8 +57,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckCIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметра 'c' равному нулю;
+    public function getTriangleWithCIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметра 'c' равному нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -67,8 +69,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckAAndBIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметрами 'a' и 'b' равными нулю;
+    public function getTriangleWithAAndBIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметрами 'a' и 'b' равными нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -79,8 +81,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckAAndCIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметрами 'a' и 'c' равными нулю;
+    public function getTriangleWithAAndCIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметрами 'a' и 'c' равными нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -91,8 +93,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckBAndCIsZero(ApiTester $I)
-        //Метод тестирует позитивный сценарий, с вводом параметрами 'b' и 'c' равными нулю;
+    public function getTriangleWithBAndCIsZero(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом параметрами 'b' и 'c' равными нулю;
         //Ожидаем false, т.к. треугольник не может существовать с нулевыми сторонами;
     {
         $data = ["isPossible" => false];
@@ -103,8 +105,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckNegativeValues(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом трёх целых отрицательных значений;
+    public function getTriangleWithNegativeValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом трёх целых отрицательных значений;
         //Ожидаем 'Not valid date', т.к. отрицательные значения не являются натуральными;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -115,8 +117,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckNotNaturalDotValues(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом одного не целого значения через символ '.' (точка);
+    public function getTriangleWithNotNaturalDotValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом одного не целого значения через символ '.' (точка);
         //Ожидаем 'Not valid date', т.к. не целые значения не являются натуральными;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -127,8 +129,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckNotNaturalCommaValues(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом одного не целого значения через символ ',' (запятая);
+    public function getTriangleWithNotNaturalCommaValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом одного не целого значения через символ ',' (запятая);
         //Ожидаем 'Not valid date', т.к. не целые значения не являются натуральными;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -139,8 +141,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckLiteralValues(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом буквенных значений;
+    public function getTriangleWithLiteralValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом буквенных значений;
         //Ожидаем 'Not valid date', т.к. буквенные значения не являются натуральными;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -151,8 +153,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckTwoValues(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом только двух значений;
+    public function getTriangleWithTwoValues(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом только двух значений;
         //Ожидаем 'Not valid date', т.к. у треугольника должны быть три значения;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -163,8 +165,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckOneValue(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом только одного значения;
+    public function getTriangleWithOneValue(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом только одного значения;
         //Ожидаем 'Not valid date', т.к. у треугольника должны быть три значения;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -175,8 +177,8 @@ class TriangleCheckerCest
         $I->seeResponseContains(json_encode($data));
     }
 
-    public function getTriangleCheckWrongParameters(ApiTester $I)
-        //Метод тестирует негативный сценарий, с вводом неверных параметров a,h,w;
+    public function getTriangleWithWrongParameters(ApiTester $I): void
+        //Метод тестирует сценарий, с вводом неверных параметров a,h,w;
         //Ожидаем 'Not valid date', т.к. должны приниматься параметры a,b,c;
     {
         $data = ["message" => ["error" => "Not valid date"]];
@@ -185,5 +187,29 @@ class TriangleCheckerCest
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::BAD_REQUEST); //400
         $I->seeResponseIsJson();
         $I->seeResponseContains(json_encode($data));
+    }
+
+    private function myProviderFirst(): Generator
+    {
+        yield[
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+    }
+
+    private function myProviderSecond(): Generator
+    {
+        yield[
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => false]
+        ];
+    }
+
+    private function myProviderThird(): Generator
+    {
+        yield[
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
     }
 }
