@@ -25,8 +25,9 @@ class TriangleCheckerCest
      * @dataProvider myProviderEquilateralTriangle
      */
     public function getTriangleWithSameValues(ApiTester $I, Example $dataProvider): void
-        //Метод тестирует позитивный сценарий, с вводом трёх целых положительных одинаковых значений;
-        //Ожидаем true, так как равносторонний треугольник может существовать;
+        //Метод тестирует сценарий, с вводом трёх целых положительных одинаковых значений;
+        //Ожидаем true, так как равносторонний треугольник может существовать (не нулевые значения);
+        //Ожидаем false, так как равносторонний треугольник не может существовать (нулевые значения);
     {
         $I->sendGet($dataProvider['url']);
 
@@ -41,7 +42,7 @@ class TriangleCheckerCest
     public function getTriangleWithValuesWithZero(ApiTester $I, Example $dataProvider): void
         //Метод тестирует сценарий, с вводом трёх целых положительных двузначных, трёхзначных и четырёхзначных значений,
         //одно из которых содержит 0;
-        //Ожидаем true, так как стороны треугольника могут быть равны двузначным и более-значным числам;
+        //Ожидаем true, так как стороны треугольника могут содержать числа с 0;
     {
         $I->sendGet($dataProvider['url']);
 
