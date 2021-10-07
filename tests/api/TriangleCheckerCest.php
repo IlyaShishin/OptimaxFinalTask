@@ -22,27 +22,28 @@ class TriangleCheckerCest
     }
 
     /**
-     * @dataProvider myProviderTrue
+     * @dataProvider myProviderEquilateralTriangle
      */
     public function getTriangleWithSameValues(ApiTester $I, Example $dataProvider): void
         //Метод тестирует позитивный сценарий, с вводом трёх целых положительных одинаковых значений;
         //Ожидаем true, так как равносторонний треугольник может существовать;
     {
-        $I->sendGet('/triangle/possible?a=3&b=3&c=3');
+        $I->sendGet($dataProvider['url']);
 
-        $I->seeResponseCodeIs($dataProvider['expectedCode']); //200
+        $I->seeResponseCodeIs($dataProvider['expectedCode']);
         $I->seeResponseIsJson();
         $I->seeResponseContains(json_encode($dataProvider['expectedMessage']));
     }
 
     /**
-     * @dataProvider myProviderTrue
+     * @dataProvider myProviderValuesWithZero
      */
-    public function getTriangleWithTwoDigitValues(ApiTester $I, Example $dataProvider): void
-        //Метод тестирует позитивный сценарий, с вводом трёх целых положительных двузначных значений;
+    public function getTriangleWithValuesWithZero(ApiTester $I, Example $dataProvider): void
+        //Метод тестирует сценарий, с вводом трёх целых положительных двузначных, трёхзначных и четырёхзначных значений,
+        //одно из которых содержит 0;
         //Ожидаем true, так как стороны треугольника могут быть равны двузначным и более-значным числам;
     {
-        $I->sendGet('/triangle/possible?a=10&b=13&c=15');
+        $I->sendGet($dataProvider['url']);
 
         $I->seeResponseCodeIs($dataProvider['expectedCode']); //200
         $I->seeResponseIsJson();
@@ -111,7 +112,7 @@ class TriangleCheckerCest
      */
     public function getTriangleWithLiteralValues(ApiTester $I, Example $dataProvider): void
         //Метод тестирует сценарий, с вводом буквенных значений;
-        //Ожидаем 'Not valid date', т.к. буквенные значения не являются натуральными;
+        //Ожидаем 'Not valid date', т.к. в значения должны приниматься только натуральные числа;
     {
         $I->sendGet('/triangle/possible?a=a&b=b&c=c');
 
@@ -121,13 +122,13 @@ class TriangleCheckerCest
     }
 
     /**
-     * @dataProvider myProviderError
+     * @dataProvider myProviderTwoValues
      */
     public function getTriangleWithTwoValues(ApiTester $I, Example $dataProvider): void
         //Метод тестирует сценарий, с вводом только двух значений;
         //Ожидаем 'Not valid date', т.к. у треугольника должны быть три значения;
     {
-        $I->sendGet('/triangle/possible?b=1&c=2');
+        $I->sendGet($dataProvider['url']);
 
         $I->seeResponseCodeIs($dataProvider['expectedCode']); //400
         $I->seeResponseIsJson();
@@ -135,13 +136,13 @@ class TriangleCheckerCest
     }
 
     /**
-     * @dataProvider myProviderError
+     * @dataProvider myProviderOneValue
      */
     public function getTriangleWithOneValue(ApiTester $I, Example $dataProvider): void
         //Метод тестирует сценарий, с вводом только одного значения;
         //Ожидаем 'Not valid date', т.к. у треугольника должны быть три значения;
     {
-        $I->sendGet('/triangle/possible?b=1');
+        $I->sendGet($dataProvider['url']);
 
         $I->seeResponseCodeIs($dataProvider['expectedCode']); //400
         $I->seeResponseIsJson();
@@ -156,6 +157,20 @@ class TriangleCheckerCest
         //Ожидаем 'Not valid date', т.к. должны приниматься параметры a,b,c;
     {
         $I->sendGet('/triangle/possible?a=2&h=3&w=4');
+
+        $I->seeResponseCodeIs($dataProvider['expectedCode']); //400
+        $I->seeResponseIsJson();
+        $I->seeResponseContains(json_encode($dataProvider['expectedMessage']));
+    }
+
+    /**
+     * @dataProvider myProviderError
+     */
+    public function getTriangleWithSQLValue(ApiTester $I, Example $dataProvider): void
+        //Метод тестирует сценарий, с вводом в значение оператора запроса SQL;
+        //Ожидаем 'Not valid date', т.к. в значения должны приниматься только натуральные числа;
+    {
+        $I->sendGet('/triangle/possible?a=select&b=3&c=4');
 
         $I->seeResponseCodeIs($dataProvider['expectedCode']); //400
         $I->seeResponseIsJson();
@@ -183,6 +198,102 @@ class TriangleCheckerCest
         yield[
             'expectedCode' => HttpCode::BAD_REQUEST,
             'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+    }
+
+    private function myProviderValuesWithZero(): Generator
+    {
+        yield 'Two-digit values with zero' => [
+            'url' => '/triangle/possible?a=10&b=13&c=15',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'Two-digit values with zero' => [
+            'url' => '/triangle/possible?a=11&b=13&c=15',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'Three-digit values with zero' => [
+            'url' => '/triangle/possible?a=111&b=103&c=155',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'Three-digit values with zero' => [
+            'url' => '/triangle/possible?a=111&b=113&c=155',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'Four-digit values with zero' => [
+            'url' => '/triangle/possible?a=1345&b=2489&c=2780',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'Four-digit values with zero' => [
+            'url' => '/triangle/possible?a=1345&b=2489&c=2781',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+    }
+
+    private function myProviderTwoValues(): Generator
+    {
+        yield 'a and b values' => [
+            'url' => '/triangle/possible?a=12&b=13',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+
+        yield 'b and c values' => [
+            'url' => '/triangle/possible?b=12&c=13',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+
+        yield 'a and c values' => [
+            'url' => '/triangle/possible?a=111&c=155',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+    }
+
+    private function myProviderOneValue(): Generator
+    {
+        yield 'only a value' => [
+            'url' => '/triangle/possible?a=12',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+
+        yield 'only b value' => [
+            'url' => '/triangle/possible?b=12',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+
+        yield 'only c value' => [
+            'url' => '/triangle/possible?c=155',
+            'expectedCode' => HttpCode::BAD_REQUEST,
+            'expectedMessage' => ["message" => ["error" => "Not valid date"]]
+        ];
+    }
+
+    private function myProviderEquilateralTriangle(): Generator
+    {
+        yield 'same values' => [
+            'url' => '/triangle/possible?a=3&b=3&c=3',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => true]
+        ];
+
+        yield 'same values with zero' => [
+            'url' => '/triangle/possible?a=0&b=0&c=0',
+            'expectedCode' => HttpCode::OK,
+            'expectedMessage' => ["isPossible" => false]
         ];
     }
 }
